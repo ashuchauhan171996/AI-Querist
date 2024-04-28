@@ -60,8 +60,12 @@ def process_message(request):
                 message = body["entry"][0]["changes"][0]["value"]["messages"][0]
                 if message["type"] == "text":
                     print("message is:", message["text"]["body"]) 
-                    response = request_llm_model(message["text"]["body"], message["from"])
-                    reply_to_whatsapp(body, response)
+                    if message["text"]["body"] == 'reset':
+                        message_history_dic.pop(message["from"])
+                        reply_to_whatsapp(body, 'Conversation History Cleared')
+                    else: 
+                        response = request_llm_model(message["text"]["body"], message["from"])
+                        reply_to_whatsapp(body, response)
                 else:
                     print("message is not text")
                     reply_to_whatsapp(body, 'send message in text form')
